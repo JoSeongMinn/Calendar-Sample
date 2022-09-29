@@ -1,0 +1,35 @@
+<mvc:View controllerName="sap.sync.booking.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m" xmlns:l="sap.ui.layout"
+    xmlns:u="sap.ui.unified" class="viewPadding">
+    <Page id="page" title="{i18n>title}">
+        <content>
+            <l:VerticalLayout>
+                <u:Calendar id="calendar" select="handleCalendarSelect"
+                    intervalSelection="true" showWeekNumbers="false"
+                    minDate="{date>/minDate}" maxDate="{date>/maxDate}"
+                    disabledDates="{path: '/disabled'}" width="30em">
+                        <u:disabledDates>
+                            <u:DateRange
+                                startDate="{start}"
+                                endDate="{end}"/>
+                        </u:disabledDates>
+                </u:Calendar>
+                <l:HorizontalLayout>
+                    <Label  text="Check-In : "
+                            class="sapUiTinyMargin" />
+                    <Text	id="selectedDateFrom"
+                            text="No Date Selected"
+                            class="sapUiTinyMargin"/>
+                </l:HorizontalLayout>
+                <l:HorizontalLayout>
+                    <Label	text="Check-Out : "
+                            class="sapUiTinyMargin" />
+                    <Text	id="selectedDateTo"
+                            text="No Date Selected"
+                            class="sapUiTinyMargin"/>
+                </l:HorizontalLayout>
+            </l:VerticalLayout>
+        </content>
+    </Page>
+</mvc:View>
