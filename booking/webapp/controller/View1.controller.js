@@ -139,7 +139,7 @@ sap.ui.define([
                 this._updateText(oCalendar.getSelectedDates()[0]);
             },
 
-            onCancel : function(){
+            onCancel : function () {
                 var oCalendar = this.getView().byId("calendar")
                 var oSelectedDateFrom = this.byId("selectedDateFrom");
                 var oSelectedDateTo = this.byId("selectedDateTo");
@@ -151,6 +151,53 @@ sap.ui.define([
                 oCalendar.setMaxDate(oMax);
                 oSelectedDateFrom.setText("No Date Selected");
                 oSelectedDateTo.setText("No Date Selected");
+                
+                var iLastYear = new Date().getFullYear() - 1;
+                for( var iYear = iLastYear; iYear<iLastYear+3; iYear++ ){
+                    this._get_holiday(iYear)
+                }
+
+            },
+
+            _get_holiday : function (iYear) {
+                /* Javascript 샘플 코드 */
+
+                var xhr = new XMLHttpRequest();
+                var method = "GET";
+
+                var url = 'https://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getHoliDeInfo?solYear=' + iYear + '&numOfRows=30&ServiceKey=ULIqadZoJxkrxgoIJc4WLIT9S%2Fb%2Fnh1ndduDCoyiKBF5upgSY1%2Bf%2BICdej1ThIINx1gC%2FxqCJ6Ru34qjtN16kg%3D%3D';
+                                
+                xhr.open(method, url);
+                xhr.onreadystatechange = function (oEvent) {
+                    const { target } = oEvent;
+                
+                    if (target.readyState === XMLHttpRequest.DONE) {
+                        const { status } = target;
+                
+                        if (status === 0 || (status >= 200 && status < 400)) {
+                            // 요청이 정상적으로 처리 된 경우
+                        } else {
+                            // 에러가 발생한 경우
+                        }
+                    }
+                };
+                xhr.onload = () => {
+                    var aDate = xhr.responseText.split('<locdate>');
+                    var aName = xhr.responseText.split('<dateName>');
+                    var oData = [];
+                    var sHoliday;
+                    var sHolidayName;
+                    var iIndex = 0;
+                    for (var i=1; i<aDate.length; i++){
+                        sHoliday = aDate[i].substring(0,8);
+                        iIndex = aName[i].indexOf('</');
+                        sHolidayName = aName[i].substring(0,iIndex);
+                        oData.push( {date: sHoliday, name: sHolidayName} )
+                    };                    
+                    console.log(oData);
+                };
+                xhr.send('');
             }
+            
         });
     });

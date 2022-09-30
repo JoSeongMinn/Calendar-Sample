@@ -19,7 +19,7 @@
 
 /* 오늘 날짜 디자인 */
 .sapUiCalItem.sapUiCalItemNow {
-    border: 0.125rem solid #aaa7f0;
+    border: 0.125rem solid #6969f7;
     border-radius: 0.25rem;
 }
 
@@ -48,15 +48,13 @@
     border-radius: 0.25rem;
 }
 
+/* 마우스 커서 */
 .sapUiCalWH, .sapUiCalItem {
     cursor: pointer;
     
 }
-/* 
-.sapUiCalItem. {
-    background-color: rgb(208, 7, 7) !important;
-    } */
 
-    .sapUiCalItemText:hover {
-        background-color: rgb(254, 2, 2) !important;
-        }
+/* 마우스 오버 효과 */
+.sapUiCalItemText:hover {
+    background-color: rgba(188, 187, 191, 0.771) !important;
+    }
