@@ -22,13 +22,7 @@ sap.ui.define([
                 var dNow = new Date();
                 var dMax = new Date();
                 dMax = new Date(dMax.setMonth(dNow.getMonth() + 6));
-                var oData = [
-                    { minDate : dNow,
-                      maxDate : dMax, 
-                      disabled: [{start: dNow, end: new Date(2016, 0, 10)},
-                        {start: new Date(2016, 0, 15)}]
-                    }
-                ]
+                var oData = { minDate : dNow, maxDate : dMax }                
                 var oDateModel = new JSONModel(oData)
                 this.getView().setModel(oDateModel, "date");
             },
@@ -95,7 +89,8 @@ sap.ui.define([
                             at: "center center",
                             width: '15em'
                         })
-                        // debugger;
+                        var oModel = this.getView().getModel("date")
+                        debugger;
                         
                     } else {
                         oSelectedDateTo.setText("No Date Selected");
