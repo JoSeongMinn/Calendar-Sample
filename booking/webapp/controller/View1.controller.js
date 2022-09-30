@@ -19,10 +19,13 @@ sap.ui.define([
 
             onInit: function () {
                 this.oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyy-MM-dd", calendarType: CalendarType.Gregorian});
-                var dNow = new Date();
-                var dMax = new Date();
-                dMax = new Date(dMax.setMonth(dNow.getMonth() + 6));
-                var oData = { minDate : dNow, maxDate : dMax }                
+                /**
+                 * minDate, maxDate : 달력선택 가능 날짜 설정
+                 */
+                var oNow = new Date();
+                var oMax = new Date();
+                oMax = new Date(oMax.setMonth(oNow.getMonth() + 6));
+                var oData = { minDate : oNow, maxDate : oMax }                
                 var oDateModel = new JSONModel(oData)
                 this.getView().setModel(oDateModel, "date");
             },
@@ -48,15 +51,28 @@ sap.ui.define([
                 var oSelectedDateFrom = this.byId("selectedDateFrom"),
                     oSelectedDateTo = this.byId("selectedDateTo"),
                     oDate;
+                var oLimit;
+                var iMonth;
                 var week = ['일', '월', '화', '수', '목', '금', '토'];
-    
+
                 if (oSelectedDates) {
                     oDate = oSelectedDates.getStartDate();
+                    /**
+                     * 최대 선택 가능 기간 설정
+                     */
+                    oLimit = new Date(oSelectedDates.getStartDate());
+                    iMonth = oSelectedDates.getStartDate().getMonth() + 1;
+                    if (oLimit) {
+                        oLimit.setMonth(iMonth)
+                        this.getView().byId("calendar").setMaxDate(oLimit)
+                    }
+
                     if (oDate) {
-                        oSelectedDateFrom.setText(this.oFormatYyyymmdd.format(oDate));                        
+                        oSelectedDateFrom.setText(this.oFormatYyyymmdd.format(oDate));
                     } else {
                         oSelectedDateTo.setText("No Date Selected");
                     }
+
                     oDate = oSelectedDates.getEndDate();
                     if (oDate) {
                         oSelectedDateTo.setText(this.oFormatYyyymmdd.format(oDate));
@@ -89,8 +105,8 @@ sap.ui.define([
                             at: "center center",
                             width: '15em'
                         })
-                        var oModel = this.getView().getModel("date")
-                        debugger;
+                        // var oModel = this.getView().getModel("date")
+                        // debugger;
                         
                     } else {
                         oSelectedDateTo.setText("No Date Selected");
@@ -121,6 +137,20 @@ sap.ui.define([
                 oCalendar.addSelectedDate(new DateRange({startDate: oMonday, endDate: oSunday}));
     
                 this._updateText(oCalendar.getSelectedDates()[0]);
+            },
+
+            onCancel : function(){
+                var oCalendar = this.getView().byId("calendar")
+                var oSelectedDateFrom = this.byId("selectedDateFrom");
+                var oSelectedDateTo = this.byId("selectedDateTo");
+                var oNow = new Date();
+                var oMax = new Date();
+                oMax = new Date(oMax.setMonth(oNow.getMonth() + 6));
+
+                oCalendar.destroySelectedDates();
+                oCalendar.setMaxDate(oMax);
+                oSelectedDateFrom.setText("No Date Selected");
+                oSelectedDateTo.setText("No Date Selected");
             }
         });
     });

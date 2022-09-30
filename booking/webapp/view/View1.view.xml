@@ -5,6 +5,7 @@
     <Page id="page" title="{i18n>title}">
         <content>
             <l:VerticalLayout>
+                <Button text="선택 취소" press="onCancel"/>
                 <u:Calendar id="calendar" select="handleCalendarSelect"
                     intervalSelection="true" showWeekNumbers="false"
                     minDate="{date>/minDate}" maxDate="{date>/maxDate}"
