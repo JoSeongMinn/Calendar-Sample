@@ -4,15 +4,18 @@ sap.ui.define([
     "sap/m/MessageToast", 
     "sap/ui/core/format/DateFormat", 
     "sap/ui/core/library",
-    "sap/ui/model/json/JSONModel"
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/unified/DateTypeRange",
+    "sap/ui/unified/library"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, DateRange, MessageToast, DateFormat, coreLibrary, JSONModel) {
+    function (Controller, DateRange, MessageToast, DateFormat, coreLibrary, JSONModel, DateTypeRange, library) {
         "use strict";
 
         var CalendarType = coreLibrary.CalendarType;
+        var CalendarDayType = library.CalendarDayType;
 
         return Controller.extend("sap.sync.booking.controller.View1", {
             oFormatYyyymmdd: null,
@@ -28,6 +31,12 @@ sap.ui.define([
                 var oData = { minDate : oNow, maxDate : oMax }                
                 var oDateModel = new JSONModel(oData)
                 this.getView().setModel(oDateModel, "date");
+
+                
+                var iLastYear = new Date().getFullYear() - 1;
+                for( var iYear = iLastYear; iYear<iLastYear+3; iYear++ ){
+                    this._get_holiday(iYear)
+                }
             },
 
             _getDatesStartToLast : function (startDate, lastDate) {
@@ -151,12 +160,9 @@ sap.ui.define([
                 oCalendar.setMaxDate(oMax);
                 oSelectedDateFrom.setText("No Date Selected");
                 oSelectedDateTo.setText("No Date Selected");
-                
-                var iLastYear = new Date().getFullYear() - 1;
-                for( var iYear = iLastYear; iYear<iLastYear+3; iYear++ ){
-                    this._get_holiday(iYear)
-                }
 
+                // oCalendar.
+                
             },
 
             _get_holiday : function (iYear) {
@@ -184,17 +190,27 @@ sap.ui.define([
                 xhr.onload = () => {
                     var aDate = xhr.responseText.split('<locdate>');
                     var aName = xhr.responseText.split('<dateName>');
-                    var oData = [];
                     var sHoliday;
                     var sHolidayName;
+                    var oHoliday = new Date();
+                    var oDate = [];
+                    var oDateRange;
                     var iIndex = 0;
+                    var oCalendar = this.getView().byId("calendar")
                     for (var i=1; i<aDate.length; i++){
-                        sHoliday = aDate[i].substring(0,8);
+                        sHoliday = aDate[i].substring(0,4) + '-' + aDate[i].substring(4,6) + '-' + aDate[i].substring(6,8);
+                        oHoliday = new Date(sHoliday)                        
                         iIndex = aName[i].indexOf('</');
                         sHolidayName = aName[i].substring(0,iIndex);
-                        oData.push( {date: sHoliday, name: sHolidayName} )
-                    };                    
-                    console.log(oData);
+                        oDate.push(oHoliday)
+                        // oData.push( {date: sHoliday, name: sHolidayName} )
+                        oDateRange = new DateTypeRange({ startDate : oHoliday})
+                        oCalendar.addSpecialDate(new DateTypeRange({
+                            startDate : oHoliday, color : 'red', type : CalendarDayType.NonWorking,
+                            tooltip: sHolidayName
+                        }))
+                    };
+                    debugger;
                 };
                 xhr.send('');
             }
